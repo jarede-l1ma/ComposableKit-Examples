@@ -86,6 +86,9 @@ func _combine(_ tasks: [Task<Void, Never>]) -> Task<Void, Never>? {
 extension Task where Success == Never, Failure == Never {
     /// Yields several times to give newly created Tasks (on other
     /// executors) a chance to run. Used by the TestStore.
+    ///
+    /// Adapted from `Task.megaYield` in swift-concurrency-extras
+    /// (Point-Free, MIT License — see NOTICE).
     package static func megaYield(count: Int = 20) async {
         for _ in 0..<count {
             await Task<Void, Never>.detached(priority: .background) { await Task.yield() }.value
