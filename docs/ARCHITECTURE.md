@@ -358,7 +358,7 @@ The View does two things and only two: it **reads** the state and **sends** Acti
 
 A single product (`ComposableKit`, iOS 15+, built in Swift 6 mode) plus the macro plugin. No runtime dependencies (`swift-syntax` is only used to compile the macros).
 
-Add it as a local or remote Swift package and link the `ComposableKit` product to the **app target only**. The app's test target just does `import ComposableKit` (linking it again would load two copies of the library).
+Add it from its repository (https://github.com/jarede-l1ma/ComposableKit, `from: "1.0.0"`) and link the `ComposableKit` product to the **app target only**. The app's test target just does `import ComposableKit` (linking it again would load two copies of the library).
 
 ### Compatibility
 

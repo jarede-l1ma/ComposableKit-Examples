@@ -69,11 +69,11 @@ If your app targets iOS 16+, prefer the official TCA: it is more complete and ac
 
 ## What is in this repository
 
-The repository has four independent parts. Each one works on its own; none requires another.
+ComposableKit is made of four independent parts. Each one works on its own; none requires another. The package lives in its own repository; this one holds the tools and the example app.
 
 | Part | Path | What it is |
 |---|---|---|
-| **ComposableKit** (Swift package) | [`Packages/ComposableKit`](Packages/ComposableKit) | The architecture library. Apps depend on it the same way they would depend on Point-Free's TCA. |
+| **ComposableKit** (Swift package) | [`jarede-l1ma/ComposableKit`](https://github.com/jarede-l1ma/ComposableKit) (separate repository) | The architecture library. Apps depend on it the same way they would depend on Point-Free's TCA. |
 | **Scene generator** | [`composablekit-create.py`](composablekit-create.py) | An offline Python script that creates a new screen ("scene") in the ComposableKit pattern: 5 files ready to fill in. |
 | **Testing skill** | [`.claude/skills/ios-tca-tests`](.claude/skills/ios-tca-tests/SKILL.md) | A [Claude Code](https://claude.com/claude-code) skill. Run it when a feature is done: it reads the scene's code, writes the unit tests (Swift Testing + `TestStore`), runs them and iterates until they pass. |
 | **Example app** | [`POC_TCA`](POC_TCA) | A small iOS app that uses the package: a movie list (`Home`) and a movie details screen (`HomeDetails`), with fake OMDb-style data and full test coverage. |
@@ -95,11 +95,13 @@ The full architecture guide — components, rules, testing strategy, composition
 
 ### 1. Add it to your app
 
-ComposableKit is a regular Swift package. Add `Packages/ComposableKit` to your project (in Xcode: **File › Add Package Dependencies… › Add Local…**, or copy the folder into your repository) and link the **`ComposableKit`** product to your **app target only**.
+ComposableKit is a regular Swift package, published at [`https://github.com/jarede-l1ma/ComposableKit`](https://github.com/jarede-l1ma/ComposableKit). In Xcode: **File › Add Package Dependencies…**, enter the URL, choose **Up to Next Major Version** from `1.0.0`, and link the **`ComposableKit`** product to your **app target only**. With a `Package.swift`:
+
+```swift
+.package(url: "https://github.com/jarede-l1ma/ComposableKit", from: "1.0.0")
+```
 
 Your test target does not link the package: it just uses `import ComposableKit` (linking it twice would load two copies of the library).
-
-> To consume it as a remote dependency (by URL, like Point-Free's packages), publish `Packages/ComposableKit` in its own repository — SwiftPM expects `Package.swift` at the repository root — and tag a version (e.g. `1.0.0`).
 
 ### 2. Write features
 
@@ -198,7 +200,7 @@ To use it in another project, copy [`.claude/skills/ios-tca-tests`](.claude/skil
 
 ## Running the example app
 
-Open `POC_TCA.xcodeproj` in Xcode 26+ and run the `POC_TCA` scheme on an iOS simulator. The package's macros need approval the first time (Xcode prompts for it).
+Open `POC_TCA.xcodeproj` in Xcode 26+ and run the `POC_TCA` scheme on an iOS simulator. Xcode downloads ComposableKit from its repository (pinned in `Package.resolved`); its macros need approval the first time (Xcode prompts for it).
 
 ```bash
 # App tests
@@ -206,8 +208,7 @@ xcodebuild test -project POC_TCA.xcodeproj -scheme POC_TCA \
   -destination 'platform=iOS Simulator,name=iPhone 17' \
   -skipMacroValidation -only-testing:POC_TCATests
 
-# Package tests (179 tests + 6 macro tests)
-cd Packages/ComposableKit && swift test
+# Package tests: run `swift test` in the ComposableKit repository
 ```
 
 ---

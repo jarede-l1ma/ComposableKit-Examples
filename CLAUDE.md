@@ -17,7 +17,7 @@ There is no cross-artifact validation script anymore (`validate.sh` was removed 
 | Scenes | `POC_TCA/Scenes/<Scene>/` (5 files, see below): `Home` → `HomeDetails` (OMDb style, wired by `AppRouter` in `POC_TCAApp.swift`) and `Sample` (raw script output) |
 | Shared app code | `POC_TCA/Shared/Analytics/AnalyticsClient.swift` (created by the script), `Shared/FakeAPI/OMDBFakeAPI.swift` (OMDb-format JSON, no API key), `Shared/UI/PosterImage.swift` (TMDB CDN posters) |
 | Tests (Swift Testing) | `POC_TCATests/` — `POC_TCAUITests` is XCUITest, do not touch |
-| Package (local SPM, Swift 6, iOS 15+) | `Packages/ComposableKit` |
+| Package (Swift 6, iOS 15+) | Separate repository https://github.com/jarede-l1ma/ComposableKit (local clone: `~/Documents/Projects/ComposableKit`); the POC depends on it remotely, `upToNextMajorVersion` from 1.0.0, pinned in `POC_TCA.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` |
 | Scene generator (offline, no AI) | `composablekit-create.py` |
 | Testing skill | `.claude/skills/ios-tca-tests` (copy for sharing: `ios-tca-tests.md` at the project root) |
 | Docs | `README.md` (overview, how to use), `docs/ARCHITECTURE.md` (full guide) |
@@ -52,7 +52,7 @@ Old company-specific names must not come back in any artifact.
 ```bash
 # Package: build + tests. The --scratch-path outside the Desktop avoids the codesign error
 # "resource fork, Finder information, or similar detritus not allowed" (synced Desktop).
-cd Packages/ComposableKit && swift build --build-tests --scratch-path /tmp/ck-build && swift test --scratch-path /tmp/ck-build
+cd ~/Documents/Projects/ComposableKit && swift build --build-tests --scratch-path /tmp/ck-build && swift test --scratch-path /tmp/ck-build
 
 # POC: tests on the simulator
 xcrun simctl list devices available | grep iPhone
@@ -67,9 +67,9 @@ python3 composablekit-create.py SceneName POC_TCA/Scenes
 # After changing the scene template: generate a throwaway scene in the POC, build/test the POC
 # (also with SWIFT_VERSION=6), then remove the scene.
 
-# Update swift-syntax (build-only macro dependency) in the package and in the POC
-cd Packages/ComposableKit && swift package update swift-syntax
-# POC: Xcode › File › Packages › Update to Latest Package Versions (or xcodebuild -resolvePackageDependencies)
+# Update ComposableKit / swift-syntax in the POC (after tagging a new package release)
+# Xcode › File › Packages › Update to Latest Package Versions (or xcodebuild -resolvePackageDependencies)
+# Package changes are made, tested and tagged in the ComposableKit repository (its CI runs swift test).
 
 # Slow CI: raise the TestStore timeout (default 1 s)
 TEST_RUNNER_COMPOSABLEKIT_TEST_TIMEOUT=5 xcodebuild test ...   # swift test: COMPOSABLEKIT_TEST_TIMEOUT=5

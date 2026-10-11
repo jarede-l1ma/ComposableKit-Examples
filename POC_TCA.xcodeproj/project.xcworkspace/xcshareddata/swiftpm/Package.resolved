@@ -1,6 +1,15 @@
 {
-  "originHash" : "dde6b5cf4377ec12c92d8333f912325bab6e2953da0e051e3b1d0813fbddbba3",
+  "originHash" : "032f85b0ec49b4bb13c590ba1542397d46c5cabe07a91f2918beece3ac0f3b0c",
   "pins" : [
+    {
+      "identity" : "composablekit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/jarede-l1ma/ComposableKit",
+      "state" : {
+        "revision" : "981d45bd4da3851513225967ce5de7403a743db5",
+        "version" : "1.0.0"
+      }
+    },
     {
       "identity" : "swift-syntax",
       "kind" : "remoteSourceControl",

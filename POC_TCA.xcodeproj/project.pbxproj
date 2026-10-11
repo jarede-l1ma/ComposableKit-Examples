@@ -202,7 +202,7 @@
 			mainGroup = 772A4FE6306C9B7E00C0F5AC;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				779164A0307041B200088FBE /* XCLocalSwiftPackageReference "Packages/ComposableKit" */,
+				779164A0307041B200088FBE /* XCRemoteSwiftPackageReference "ComposableKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 772A4FF0306C9B7E00C0F5AC /* Products */;
@@ -590,16 +590,21 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		779164A0307041B200088FBE /* XCLocalSwiftPackageReference "Packages/ComposableKit" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/ComposableKit;
+/* Begin XCRemoteSwiftPackageReference section */
+		779164A0307041B200088FBE /* XCRemoteSwiftPackageReference "ComposableKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/jarede-l1ma/ComposableKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
 		};
-/* End XCLocalSwiftPackageReference section */
+/* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		779164A1307041B200088FBE /* ComposableKit */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = 779164A0307041B200088FBE /* XCRemoteSwiftPackageReference "ComposableKit" */;
 			productName = ComposableKit;
 		};
 /* End XCSwiftPackageProductDependency section */
