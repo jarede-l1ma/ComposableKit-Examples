@@ -1,6 +1,8 @@
 # ComposableKit
 
-**A lightweight, dependency-free implementation of [The Composable Architecture](https://github.com/pointfreeco/swift-composable-architecture) (TCA) for SwiftUI apps that support iOS 15+.**
+**A lightweight, dependency-free implementation of the API of [The Composable Architecture](https://github.com/pointfreeco/swift-composable-architecture) (TCA), for SwiftUI apps that still support iOS 15.**
+
+> ComposableKit is an independent project, inspired by and API-compatible with Point-Free's TCA. It is not affiliated with or endorsed by Point-Free. See [Acknowledgments](#acknowledgments).
 
 ComposableKit keeps Point-Free's API and names — `@Reducer`, `@ObservableState`, `Effect.run`, `@Dependency`, `@Shared`, `TestStore` — so the TCA documentation and examples apply. It runs on iOS 15, has no runtime dependencies, and works in Swift 5 and Swift 6 projects, with or without default `MainActor` isolation.
 
@@ -57,6 +59,12 @@ struct CounterView: View {
 }
 ```
 
+### Why it exists
+
+Current TCA releases require **iOS 16+** (1.26.2, the latest at the time of writing). Apps that still support iOS 15 can only use older TCA releases. ComposableKit offers the same programming model on iOS 15, in a small package with **no external dependencies** (only `swift-syntax`, at build time, for the macros), plus a scene generator and a testing skill built around it.
+
+If your app targets iOS 16+, prefer the official TCA: it is more complete and actively maintained by Point-Free. Since the API is the same, moving from ComposableKit to TCA later is mostly a matter of changing the import and the adjustments listed below.
+
 ---
 
 ## What is in this repository
@@ -108,7 +116,7 @@ The API is the same as TCA's:
 | Reducer modifiers | `.onChange(of:)`, `.dependency(_:_:)`, `._printChanges()` |
 | Testing | exhaustive `TestStore`, `TestClock`, `LockIsolated` |
 
-Differences from the official TCA, all caused by iOS 15 support:
+Differences from the official TCA (iOS 15 support and deliberate simplifications):
 
 - The View uses `@ObservedObject var store: StoreOf<Feature>` (the `Store` is an `ObservableObject`); there is no `@Bindable` or `WithPerceptionTracking`.
 - No `@Presents` / `StackState`: navigation goes through a `navigate` closure injected by whoever creates the screen (a Coordinator or router).
@@ -208,3 +216,15 @@ cd Packages/ComposableKit && swift test
 
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — the full guide: the pattern, each component, analytics, the View contract, testing strategy, complex scenes, shared state and known limitations.
 - [Point-Free's TCA documentation](https://pointfreeco.github.io/swift-composable-architecture/main/documentation/composablearchitecture/) — the API reference ComposableKit mirrors.
+
+---
+
+## Acknowledgments
+
+ComposableKit would not exist without [Point-Free](https://www.pointfree.co). The architecture, its API and its names come from [The Composable Architecture](https://github.com/pointfreeco/swift-composable-architecture) and the libraries it builds on (swift-case-paths, swift-dependencies, swift-identified-collections, swift-sharing, swift-clocks, swift-concurrency-extras, swift-issue-reporting), all MIT-licensed. ComposableKit re-implements that API for iOS 15 without depending on them.
+
+This project is not affiliated with or endorsed by Point-Free, Inc. See [`NOTICE`](NOTICE) for the attribution and Point-Free's license text.
+
+## License
+
+ComposableKit is available under the MIT License. See [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE).

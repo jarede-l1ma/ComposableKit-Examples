@@ -7,7 +7,7 @@
 
 ## 1. What is ComposableKit?
 
-**ComposableKit** is a small, dependency-free implementation of **TCA — The Composable Architecture** (Point-Free): the same API and the same names (`@Reducer`, `@ObservableState`, `Effect.run`, `@Dependency`, `@Shared`, `TestStore`...), in a single Swift package that runs on **iOS 15+**.
+**ComposableKit** is a small, dependency-free implementation of the API of **TCA — The Composable Architecture** (Point-Free), not affiliated with or endorsed by Point-Free (see `NOTICE`): the same API and the same names (`@Reducer`, `@ObservableState`, `Effect.run`, `@Dependency`, `@Shared`, `TestStore`...), in a single Swift package that runs on **iOS 15+**.
 
 Why use it:
 
@@ -20,10 +20,10 @@ Why use it:
 
 | Situation | Answer |
 |---|---|
-| Short | "It is **TCA**, The Composable Architecture — Point-Free's — in a lightweight package that supports iOS 15." |
+| Short | "It is **TCA**'s programming model — Point-Free's The Composable Architecture — in a lightweight package that supports iOS 15." |
 | In a meeting | "Each screen is a Feature with state, actions and a reducer. Everything asynchronous is a declared effect and dependencies are injected, which makes everything testable with the `TestStore`. We use TCA's API in a small package with no external runtime dependency." |
 | "Isn't that MVI?" | "It belongs to the same unidirectional-flow family (Redux, Elm, MVI). The idea is MVI's; the implementation is TCA's, which adds effects, dependency injection, screen composition and testing tools." |
-| "Why not the official TCA?" | "iOS 15 support and no external runtime dependency. Since the API is the same, Point-Free's docs apply, and moving to the official TCA later is cheap." |
+| "Why not the official TCA?" | "Current TCA releases require iOS 16+, and our app still supports iOS 15. ComposableKit also has no external runtime dependency. Since the API is the same, Point-Free's docs apply, and moving to the official TCA once we drop iOS 15 is cheap." |
 
 ---
 
