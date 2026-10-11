@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "additionalDirectories": [
+      "/Users/jarede/Desktop/TCA"
+    ],
+    "allow": [
+      "Bash(swift build *)",
+      "Bash(swift test *)",
+      "Bash(swift package resolve *)",
+      "Bash(xcodebuild -list *)",
+      "Bash(xcodebuild build *)",
+      "Bash(xcodebuild test *)",
+      "Bash(xcodebuild -version)",
+      "Bash(xcrun simctl list *)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Read(/Users/jarede/Desktop/TCA/**)"
+    ],
+    "ask": [
+      "Bash(git push *)",
+      "Bash(git commit *)"
+    ],
+    "deny": [
+      "Bash(rm -rf *)",
+      "Bash(sudo *)",
+      "Read(./.env)",
+      "Read(./.env.*)"
+    ]
+  }
+}
