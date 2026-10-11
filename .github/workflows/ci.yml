@@ -20,19 +20,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # ComposableKit is a private repository: the default GITHUB_TOKEN cannot read it.
-      # Create a fine-grained token with "Contents: Read-only" on jarede-l1ma/ComposableKit
-      # and save it as the COMPOSABLEKIT_TOKEN secret. Not needed once the package is public.
-      - name: Access to ComposableKit
-        env:
-          COMPOSABLEKIT_TOKEN: ${{ secrets.COMPOSABLEKIT_TOKEN }}
-        run: |
-          if [ -n "$COMPOSABLEKIT_TOKEN" ]; then
-            git config --global url."https://x-access-token:${COMPOSABLEKIT_TOKEN}@github.com/jarede-l1ma/ComposableKit".insteadOf "https://github.com/jarede-l1ma/ComposableKit"
-          else
-            echo "::notice::COMPOSABLEKIT_TOKEN is not set: resolving ComposableKit without credentials (works only if the repository is public)."
-          fi
-
       - name: Toolchain
         run: |
           xcodebuild -version
