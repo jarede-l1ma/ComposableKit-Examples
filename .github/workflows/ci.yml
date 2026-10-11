@@ -1,0 +1,96 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DESTINATION: "platform=iOS Simulator,name=iPhone 17,OS=latest"
+
+jobs:
+  test:
+    name: MovieOMDB tests + scene template
+    runs-on: macos-26
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      # ComposableKit is a private repository: the default GITHUB_TOKEN cannot read it.
+      # Create a fine-grained token with "Contents: Read-only" on jarede-l1ma/ComposableKit
+      # and save it as the COMPOSABLEKIT_TOKEN secret. Not needed once the package is public.
+      - name: Access to ComposableKit
+        env:
+          COMPOSABLEKIT_TOKEN: ${{ secrets.COMPOSABLEKIT_TOKEN }}
+        run: |
+          if [ -n "$COMPOSABLEKIT_TOKEN" ]; then
+            git config --global url."https://x-access-token:${COMPOSABLEKIT_TOKEN}@github.com/jarede-l1ma/ComposableKit".insteadOf "https://github.com/jarede-l1ma/ComposableKit"
+          else
+            echo "::notice::COMPOSABLEKIT_TOKEN is not set: resolving ComposableKit without credentials (works only if the repository is public)."
+          fi
+
+      - name: Toolchain
+        run: |
+          xcodebuild -version
+          xcrun simctl list runtimes ios
+
+      - name: Resolve packages
+        run: |
+          xcodebuild -resolvePackageDependencies -project MovieOMDB.xcodeproj -scheme MovieOMDB \
+            -scmProvider system
+
+      # Booting first avoids most "failed to launch" simulator errors.
+      - name: Boot simulator
+        run: |
+          UDID=$(xcrun simctl list devices available -j | python3 -c "
+          import json, sys
+          runtimes = json.load(sys.stdin)['devices']
+          ios = sorted((k for k in runtimes if 'iOS' in k), key=lambda k: [int(x) for x in k.split('iOS-')[1].split('-')])
+          print(next(d['udid'] for d in runtimes[ios[-1]] if d['name'] == 'iPhone 17'))")
+          echo "Booting iPhone 17 ($UDID)"
+          xcrun simctl boot "$UDID" || true   # already booted is fine
+          xcrun simctl bootstatus "$UDID" -b
+          echo "DESTINATION=platform=iOS Simulator,id=$UDID" >> "$GITHUB_ENV"
+
+      # Retried once, and only when the simulator fails to launch the app (infrastructure
+      # flakiness); a real test failure fails the step on the first run.
+      - name: Test
+        run: |
+          run_tests() {
+            xcodebuild test -project MovieOMDB.xcodeproj -scheme MovieOMDB \
+              -destination "$DESTINATION" \
+              -skipMacroValidation -scmProvider system \
+              -collect-test-diagnostics never \
+              -only-testing:MovieOMDBTests 2>&1 | tee test.log
+            return "${PIPESTATUS[0]}"
+          }
+          run_tests && exit 0
+          if grep -q "Failed to install or launch the test runner" test.log; then
+            echo "::warning::Simulator failed to launch the app; retrying once."
+            run_tests
+          else
+            exit 1
+          fi
+        env:
+          TEST_RUNNER_COMPOSABLEKIT_TEST_TIMEOUT: "5"
+
+      # The scene generator's template must compile as generated, in Swift 5 and Swift 6.
+      - name: Generate a scene with composablekit-create.py
+        run: python3 composablekit-create.py CIGeneratedScene MovieOMDB/Scenes < /dev/null
+
+      - name: Build with the generated scene (Swift 5)
+        run: |
+          xcodebuild build -project MovieOMDB.xcodeproj -scheme MovieOMDB \
+            -destination "$DESTINATION" \
+            -skipMacroValidation -scmProvider system
+
+      - name: Build with the generated scene (Swift 6)
+        run: |
+          xcodebuild build -project MovieOMDB.xcodeproj -scheme MovieOMDB \
+            -destination "$DESTINATION" \
+            -skipMacroValidation -scmProvider system \
+            SWIFT_VERSION=6
