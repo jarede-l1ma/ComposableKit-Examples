@@ -1,4 +1,8 @@
-# ComposableKit
+# ComposableKit-Examples
+
+Example app and tooling for **[ComposableKit](https://github.com/jarede-l1ma/ComposableKit)**: **MovieOMDB**, an OMDb-style movie app built as the proof of concept of the architecture, plus a scene generator, a Claude Code testing skill and the full architecture guide.
+
+## About ComposableKit
 
 **A lightweight, dependency-free implementation of the API of [The Composable Architecture](https://github.com/pointfreeco/swift-composable-architecture) (TCA), for SwiftUI apps that still support iOS 15.**
 
@@ -76,7 +80,7 @@ ComposableKit is made of four independent parts. Each one works on its own; none
 | **ComposableKit** (Swift package) | [`jarede-l1ma/ComposableKit`](https://github.com/jarede-l1ma/ComposableKit) (separate repository) | The architecture library. Apps depend on it the same way they would depend on Point-Free's TCA. |
 | **Scene generator** | [`composablekit-create.py`](composablekit-create.py) | An offline Python script that creates a new screen ("scene") in the ComposableKit pattern: 5 files ready to fill in. |
 | **Testing skill** | [`.claude/skills/ios-tca-tests`](.claude/skills/ios-tca-tests/SKILL.md) | A [Claude Code](https://claude.com/claude-code) skill. Run it when a feature is done: it reads the scene's code, writes the unit tests (Swift Testing + `TestStore`), runs them and iterates until they pass. |
-| **Example app** | [`POC_TCA`](POC_TCA) | A small iOS app that uses the package: a movie list (`Home`) and a movie details screen (`HomeDetails`), with fake OMDb-style data and full test coverage. |
+| **Example app** | [`MovieOMDB`](MovieOMDB) | The proof of concept: a small iOS app that uses the package by URL, like any app would — a movie list (`Home`) and a movie details screen (`HomeDetails`), with fake OMDb-style data and full test coverage. |
 
 The full architecture guide — components, rules, testing strategy, composition, comparisons with MVVM/VIP — is in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
@@ -149,7 +153,7 @@ func factTappedShowsTheFact() async {
 }
 ```
 
-**Required once per test target:** add [`ComposableKitTestSupport.swift`](POC_TCATests/Helpers/ComposableKitTestSupport.swift) to it. It routes `TestStore` failures to Swift Testing and isolates `@Shared` values per test — without it, failures only show up in the console and the test passes. The testing skill adds it automatically.
+**Required once per test target:** add [`ComposableKitTestSupport.swift`](MovieOMDBTests/Helpers/ComposableKitTestSupport.swift) to it. It routes `TestStore` failures to Swift Testing and isolates `@Shared` values per test — without it, failures only show up in the console and the test passes. The testing skill adds it automatically.
 
 On a slow CI, raise the `TestStore` timeout (default 1 s) with `COMPOSABLEKIT_TEST_TIMEOUT=5` (`TEST_RUNNER_COMPOSABLEKIT_TEST_TIMEOUT=5` with `xcodebuild`).
 
@@ -180,7 +184,7 @@ python3 composablekit-create.py SafeMode ./MyApp/Scenes
 - An existing scene is never overwritten: only missing files are created. `--force` resets the scene to the template.
 - The generated scene compiles as is (Swift 5 and Swift 6, iOS 15+). The View uses only native SwiftUI components — replace them with your design system freely.
 
-The Factory returns a `UIViewController`, so scenes plug into UIKit navigation or into SwiftUI through `UIViewControllerRepresentable` (see [`POC_TCAApp.swift`](POC_TCA/POC_TCAApp.swift)).
+The Factory returns a `UIViewController`, so scenes plug into UIKit navigation or into SwiftUI through `UIViewControllerRepresentable` (see [`MovieOMDBApp.swift`](MovieOMDB/MovieOMDBApp.swift)).
 
 ---
 
@@ -200,13 +204,13 @@ To use it in another project, copy [`.claude/skills/ios-tca-tests`](.claude/skil
 
 ## Running the example app
 
-Open `POC_TCA.xcodeproj` in Xcode 26+ and run the `POC_TCA` scheme on an iOS simulator. Xcode downloads ComposableKit from its repository (pinned in `Package.resolved`); its macros need approval the first time (Xcode prompts for it).
+Open `MovieOMDB.xcodeproj` in Xcode 26+ and run the `MovieOMDB` scheme on an iOS simulator. Xcode downloads ComposableKit from its repository (pinned in `Package.resolved`); its macros need approval the first time (Xcode prompts for it).
 
 ```bash
 # App tests
-xcodebuild test -project POC_TCA.xcodeproj -scheme POC_TCA \
+xcodebuild test -project MovieOMDB.xcodeproj -scheme MovieOMDB \
   -destination 'platform=iOS Simulator,name=iPhone 17' \
-  -skipMacroValidation -only-testing:POC_TCATests
+  -skipMacroValidation -only-testing:MovieOMDBTests
 
 # Package tests: run `swift test` in the ComposableKit repository
 ```
